@@ -1,6 +1,7 @@
 const express = require("express");
 const request = require("request");
 const bodyParser = require('body-parser');
+const https = require('https');
 
 const app = express();
 
@@ -20,9 +21,46 @@ app.post("/", function(req, res){
   const lName = req.body.lName;
   const email = req.body.email;
 
-  console.log(fName, lName, email);
-})
+  const data = {
+    members :[
+      {
+        email_address: email,
+        status: "subscribed",
+        merge_fields: {
+          FNAME: fName,
+          LNAME: lName
+        }
+      }
+    ]
+  }
+
+  const jsonData = JSON.stringify(data);
+
+  const url = "https://us8.api.mailchimp.com/3.0/lists/78dc0a1df3";
+
+  const options = {
+    method: "POST",
+    auth: "Vainakh:89cc789f7dd26943ee3bd2d44bb2e0a0-us8"
+  }
+
+  const request = https.request(url, options, function(response){
+    response.on("data", function(data){
+      console.log(JSON.parse(data));
+    })
+  })
+
+  request.write(jsonData);
+  request.end();
+
+});
+
 
 app.listen(3000, function(){
   console.log("The server is running on port 3000.");
 });
+
+// API key
+// 89cc789f7dd26943ee3bd2d44bb2e0a0-us8
+
+// List ID
+// 78dc0a1df3
