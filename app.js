@@ -40,19 +40,30 @@ app.post("/", function(req, res){
 
   const options = {
     method: "POST",
-    auth: "Vainakh:89cc789f7dd26943ee3bd2d44bb2e0a0-us8"
+    auth: "Vainakh:ba4ac1fa2b9a00a0a741ec08d0392484-us8"
   }
 
   const request = https.request(url, options, function(response){
+
+    if (response.statusCode === 200) {
+      res.sendFile(__dirname + "/success.html");
+    } else {
+      res.sendFile(__dirname + "/failure.html");
+    }
+
     response.on("data", function(data){
       console.log(JSON.parse(data));
     })
   })
 
-  request.write(jsonData);
+  // request.write(jsonData);
   request.end();
 
 });
+
+app.post("/failure", function(req, res){
+  res.redirect("/")
+})
 
 
 app.listen(3000, function(){
